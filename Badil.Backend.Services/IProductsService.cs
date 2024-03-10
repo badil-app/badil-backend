@@ -4,6 +4,7 @@
     {
         Task AddBadil(string barcode, string originalProductId);
         Task AddProduct(string barcode);
+        Task<FoodProduct?> GetFoodFactAsync(string barcode);
         Task<List<FoodProduct>> GetSimilarProductsAsync(string barcode);
     }
 }

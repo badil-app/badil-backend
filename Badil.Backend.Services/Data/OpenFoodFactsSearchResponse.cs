@@ -16,7 +16,7 @@ namespace Badil.Backend.Services.Data
     public class OpenFoodFactsProductResponse
     {
         [JsonPropertyName("product")]
-        public required FoodProduct Product { get; set; }
+        public  FoodProduct Product { get; set; }
     }
 
 }

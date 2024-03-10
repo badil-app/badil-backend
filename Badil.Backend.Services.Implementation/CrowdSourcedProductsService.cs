@@ -33,9 +33,8 @@ namespace Badil.Backend.Services.Implementation
         public async Task<List<FoodProduct>> GetSimilarProductsAsync(string barcode)
         {
             var fact = await GetFoodFactAsync(barcode);
-            if (fact == null) return null!;
-            var found = await context.Products.FindAsync(long.Parse(fact?.Id!));
-            if (found == null)
+            var found = await context.Products.FindAsync(long.Parse(fact?.Id ?? barcode));
+            if (found == null && fact != null)
             {
                 found = fact!.ToProduct(bigBrandNames ?? InitBigBrandNames());
                 context.Products.Add(found);
@@ -43,6 +42,7 @@ namespace Badil.Backend.Services.Implementation
                 return [];
             }
             var similarProducts = context.Products
+                .Include(x => x.UserReviews)
                 .Where(x => !x.IsBigNameBrand && x.ProductId != found.ProductId && (
                     x.Products.Any(p => p.ProductId == found.ProductId) || x.AlternativeProducts.Any(p => p.ProductId == found.ProductId)
             )).Select(x => new FoodProduct(x));
@@ -66,6 +66,18 @@ namespace Badil.Backend.Services.Implementation
             }
             Product newProduct = fact.ToProduct(bigBrandNames ?? InitBigBrandNames());
             context.Products.Add(newProduct);
+            await context.SaveChangesAsync();
+            await trans.CommitAsync();
+        }
+
+        public async Task AddReview(string barcode, double value)
+        {
+            using var trans = await context.Database.BeginTransactionAsync();
+            var product = await context.Products.Include(x => x.UserReviews).SingleOrDefaultAsync(x => x.Barcode == barcode);
+            if (product == null) return;
+            context.UserReviews.RemoveRange(product.UserReviews.Where(x => x.UserId == 1));
+            if (product == null) return;
+            product.UserReviews.Add(new UserReview() { Score = (int)value });
             await context.SaveChangesAsync();
             await trans.CommitAsync();
         }
