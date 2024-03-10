@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="RestSharp" Version="110.2.0" />
+    <PackageReference Include="Rystem.OpenAi" Version="3.3.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Badil.Backend.Data\Badil.Backend.Data.csproj" />
+    <ProjectReference Include="..\Badil.Backend.Services.Tools\Badil.Backend.Services.Tools.csproj" />
+    <ProjectReference Include="..\Badil.Backend.Services\Badil.Backend.Services.csproj" />
+  </ItemGroup>
+
+</Project>
